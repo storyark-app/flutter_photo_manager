@@ -57,10 +57,14 @@ class PhotoManager(private val context: Context) {
     // make is all to the gallery list
     val entity = fromDb.run {
       var count = 0
+      var modifiedDt: Long = 0
       for (item in this) {
         count += item.length
+        if (item.modifiedDt > modifiedDt) {
+          modifiedDt = item.modifiedDt
+        }
       }
-      GalleryEntity(ALL_ID, "Recent", count, type, true)
+      GalleryEntity(ALL_ID, "Recent", count, type, modifiedDt, true)
     }
 
     return listOf(entity) + fromDb
@@ -149,10 +153,14 @@ class PhotoManager(private val context: Context) {
         // make is all to the gallery list
         allGalleryList.run {
           var count = 0
+          var modifiedDt: Long = 0
           for (item in this) {
             count += item.length
+            if (item.modifiedDt > modifiedDt) {
+              modifiedDt = item.modifiedDt
+            }
           }
-          GalleryEntity(ALL_ID, "Recent", count, type, true)
+          GalleryEntity(ALL_ID, "Recent", count, type, modifiedDt, true)
         }
       }
     }

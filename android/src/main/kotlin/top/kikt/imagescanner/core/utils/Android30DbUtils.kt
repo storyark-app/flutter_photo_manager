@@ -20,7 +20,6 @@ import top.kikt.imagescanner.core.cache.CacheContainer
 import top.kikt.imagescanner.core.entity.AssetEntity
 import top.kikt.imagescanner.core.entity.FilterOption
 import top.kikt.imagescanner.core.entity.GalleryEntity
-import top.kikt.imagescanner.core.utils.AndroidQDBUtils.getString
 import top.kikt.imagescanner.util.LogUtils
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -64,6 +63,7 @@ object Android30DbUtils : IDBUtils {
 
     val nameMap = HashMap<String, String>()
     val countMap = HashMap<String, Int>()
+    val dateMap = HashMap<String, Long>()
 
     while (cursor.moveToNext()) {
       val galleryId = cursor.getString(MediaStore.Images.Media.BUCKET_ID)
@@ -72,18 +72,21 @@ object Android30DbUtils : IDBUtils {
         countMap[galleryId] = countMap[galleryId]!! + 1
         continue
       }
-      val galleryName = cursor.getString(MediaStore.Images.Media.BUCKET_DISPLAY_NAME) ?: ""
+      val galleryName = cursor.getString(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+      val modifiedDate = cursor.getLong(MediaStore.Images.Media.DATE_MODIFIED)
 
       nameMap[galleryId] = galleryName
       countMap[galleryId] = 1
+      dateMap[galleryId] = modifiedDate
     }
 
     nameMap.forEach {
       val id = it.key
       val name = it.value
       val count = countMap[id]!!
+      val modifiedDt = dateMap[id]!!
 
-      val entity = GalleryEntity(id, name, count, requestType, false)
+      val entity = GalleryEntity(id, name, count, requestType, modifiedDt, false)
       list.add(entity)
     }
 
@@ -109,7 +112,8 @@ object Android30DbUtils : IDBUtils {
 
     cursor.use {
       val count = cursor.count
-      val galleryEntity = GalleryEntity(PhotoManager.ALL_ID, "Recent", count, requestType, true)
+      val modifiedDate = cursor.getLong(MediaStore.MediaColumns.DATE_MODIFIED)
+      val galleryEntity = GalleryEntity(PhotoManager.ALL_ID, "Recent", count, requestType, modifiedDate, true)
       list.add(galleryEntity)
     }
 
@@ -298,7 +302,8 @@ object Android30DbUtils : IDBUtils {
       cursor.close()
       return null
     }
-    return GalleryEntity(galleryId, name, cursor.count, type, isAll)
+    val modifiedDate = cursor.getLong(MediaStore.MediaColumns.DATE_MODIFIED)
+    return GalleryEntity(galleryId, name, cursor.count, type, modifiedDate, isAll)
   }
 
   override fun getExif(context: Context, id: String): ExifInterface? {
