@@ -6,5 +6,6 @@ data class GalleryEntity(
         val name: String,
         var length: Int,
         val typeInt: Int,
+        val modifiedDt: Long,
         var isAll: Boolean = false
 )
