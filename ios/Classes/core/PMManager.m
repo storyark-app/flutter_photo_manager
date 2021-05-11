@@ -631,6 +631,95 @@
   return resource.type == PHAssetResourceTypePhoto || resource.type == PHAssetResourceTypeFullSizePhoto;
 }
 
+- (BOOL)livePhotoResourceExistsWithId:(NSString *)id {
+    PMAssetEntity *entity = [self getAssetEntity:id];
+    if (!(entity && entity.phAsset)) {
+        return false;
+    }
+    PHAsset *asset = entity.phAsset;
+    if (!asset.isImage) {
+        return false;
+    }
+    NSArray<PHAssetResource *> *assetResources = [PHAssetResource assetResourcesForAsset:asset];
+
+    PHAssetResource *livePhotoResource = [self findLivePhotoResource:assetResources];
+    if (livePhotoResource == nil) {
+        return false;
+    }
+
+    return true;
+}
+
+- (void)getLivePhotoFileWithId:(NSString *)id resultHandler:(NSObject <PMResultHandler> *)handler progressHandler:(NSObject <PMProgressHandlerProtocol> *)progressHandler {
+    PMAssetEntity *entity = [self getAssetEntity:id];
+    if (!(entity && entity.phAsset)) {
+        [handler replyError:@"asset is not found"];
+        return;
+    }
+    PHAsset *asset = entity.phAsset;
+    if (!asset.isImage) {
+        [handler replyError:@"asset is not a live photo"];
+        return;
+    }
+    NSString *tmpFolder = NSTemporaryDirectory();
+    NSFileManager *fileManager = NSFileManager.defaultManager;
+
+    NSMutableString *targetPath = [NSMutableString stringWithString:tmpFolder];
+
+    [targetPath appendFormat:@"%@", @".live_photo"];
+    [fileManager createDirectoryAtPath:targetPath withIntermediateDirectories:true attributes:@{} error:nil];
+
+
+    NSArray<PHAssetResource *> *assetResources = [PHAssetResource assetResourcesForAsset:asset];
+
+    PHAssetResource *livePhotoResource = [self findLivePhotoResource:assetResources];
+    if (livePhotoResource == nil) {
+        [handler replyError:@"couldn't find live photo resource"];
+        return;
+    }
+
+    [targetPath appendFormat:@"/%@_%@", [asset.localIdentifier stringByReplacingOccurrencesOfString:@"/" withString:@"_"], livePhotoResource.originalFilename];
+    NSURL *fileUrl = [NSURL fileURLWithPath:targetPath];
+
+    [PMFileHelper deleteFile:targetPath];
+
+    PHAssetResourceRequestOptions *options = [PHAssetResourceRequestOptions new];
+    [options setNetworkAccessAllowed:YES];
+
+    [self notifyProgress:progressHandler progress:0 state:PMProgressStatePrepare];
+
+    [options setProgressHandler:^(double progress) {
+        if (progress != 1) {
+            [self notifyProgress:progressHandler progress:progress state:PMProgressStateLoading];
+        }
+    }];
+
+    [PHAssetResourceManager.defaultManager writeDataForAssetResource:livePhotoResource
+                                                              toFile:fileUrl
+                                                             options:options
+                                                   completionHandler:^(NSError *_Nullable error) {
+                                                       if (error) {
+                                                           NSLog(@"error = %@", error);
+                                                           [handler reply:nil];
+                                                       } else {
+                                                           [self notifySuccess:progressHandler];
+                                                           [handler reply:targetPath];
+                                                       }
+                                                   }];
+
+}
+
+- (PHAssetResource *)findLivePhotoResource:(NSArray <PHAssetResource *> *)resources {
+    for (PHAssetResource *resource in resources) {
+        if (@available(iOS 9.1, *)) {
+            if (resource.type == PHAssetResourceTypePairedVideo) {
+                return resource;
+            }
+        }
+    }
+    return nil;
+}
+
 - (void)fetchOriginImageFile:(PHAsset *)asset resultHandler:(NSObject <PMResultHandler> *)handler progressHandler:(NSObject <PMProgressHandlerProtocol> *)progressHandler {
   PHAssetResource *imageResource = [asset getAdjustResource];
 

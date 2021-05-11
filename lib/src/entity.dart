@@ -297,6 +297,10 @@ class AssetEntity {
   Future<File?> get originFile async =>
       PhotoManager._getFileWithId(id, isOrigin: true);
 
+  Future<bool> get hasLivePhoto => _plugin.hasLivePhotoResource(id);
+
+  Future<File?> get livePhotoFile => PhotoManager._getLivePhotoFileWithId(id);
+
   /// The asset's bytes.
   ///
   /// Use [originBytes]

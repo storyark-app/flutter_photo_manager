@@ -157,6 +157,20 @@ class PhotoManager {
   /// see [_NotifyManager]
   static void stopChangeNotify() => _notifyManager.stopHandleNotify();
 
+  static Future<File?> _getLivePhotoFileWithId(String id,
+      {PMProgressHandler? progressHandler}) async {
+    if (!Platform.isIOS && !Platform.isMacOS) {
+      return null;
+    }
+
+    final path =
+        await _plugin.getLivePhotoFile(id, progressHandler: progressHandler);
+    if (path == null) {
+      return null;
+    }
+    return File(path);
+  }
+
   static Future<File?> _getFileWithId(
     String id, {
     bool isOrigin = false,
