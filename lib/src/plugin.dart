@@ -115,15 +115,6 @@ class Plugin with BasePlugin, IosPlugin, AndroidPlugin {
     await _channel.invokeMethod('releaseMemCache');
   }
 
-  Future<bool> hasLivePhotoResource(String id) async {
-    if (!Platform.isIOS && !Platform.isMacOS) {
-      return false;
-    }
-
-    final params = {'id': id};
-    return (await _channel.invokeMethod('hasLivePhotoResource', params)) == true;
-  }
-
   Future<String?> getLivePhotoFile(String id, {PMProgressHandler? progressHandler}) async {
     final params = {'id': id};
     _injectParams(params, progressHandler);

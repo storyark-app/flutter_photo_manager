@@ -69,6 +69,7 @@ class ConvertUtils {
       duration: data['duration'] ?? 0,
       orientation: data['orientation'] ?? 0,
       isFavorite: data['favorite'] ?? false,
+      isLivePhoto: data['isLivePhoto'] ?? false,
       title: data['title'],
       createDtSecond: data['createDt'],
       modifiedDateSecond: data['modifiedDt'],

@@ -104,6 +104,7 @@
           @"lng": @(asset.lng),
           @"lat": @(asset.lat),
           @"title": needTitle ? asset.title : @"",
+          @"isLivePhoto": @(asset.isLivePhoto),
   };
 }
 

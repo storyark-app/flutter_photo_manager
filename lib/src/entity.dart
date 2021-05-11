@@ -171,6 +171,7 @@ class AssetEntity {
     this.duration = 0,
     this.orientation = 0,
     this.isFavorite = false,
+    this.isLivePhoto = false,
     this.title,
     this.createDtSecond,
     this.modifiedDateSecond,
@@ -296,8 +297,6 @@ class AssetEntity {
   /// If you need to see the loading status, look at the [loadFile].
   Future<File?> get originFile async =>
       PhotoManager._getFileWithId(id, isOrigin: true);
-
-  Future<bool> get hasLivePhoto => _plugin.hasLivePhotoResource(id);
 
   Future<File?> get livePhotoFile => PhotoManager._getLivePhotoFileWithId(id);
 
@@ -430,6 +429,8 @@ class AssetEntity {
   ///
   /// In iOS, it is consistent with PHAsset.isFavorite. to change it, Use `PhotoManager.editor.iOS.favoriteAsset`, See [IosEditor.favoriteAsset]
   bool isFavorite;
+
+  bool isLivePhoto;
 
   /// In iOS, always null.
   ///

@@ -44,7 +44,7 @@
 
 }
 - (instancetype)initWithId:(NSString *)id createDt:(long)createDt width:(NSUInteger)width height:(NSUInteger)height
-                  duration:(long)duration type:(int)type {
+                  duration:(long)duration type:(int)type isLivePhoto:(BOOL)isLivePhoto {
   self = [super init];
   if (self) {
     self.id = id;
@@ -53,14 +53,15 @@
     self.height = height;
     self.duration = duration;
     self.type = type;
+    self.isLivePhoto = isLivePhoto;
   }
 
   return self;
 }
 
 + (instancetype)entityWithId:(NSString *)id createDt:(long)createDt width:(NSUInteger)width height:(NSUInteger)height
-                    duration:(long)duration type:(int)type {
-  return [[self alloc] initWithId:id createDt:createDt width:width height:height duration:duration type:type];
+                    duration:(long)duration type:(int)type isLivePhoto:(BOOL)isLivePhoto {
+  return [[self alloc] initWithId:id createDt:createDt width:width height:height duration:duration type:type isLivePhoto:isLivePhoto];
 }
 
 

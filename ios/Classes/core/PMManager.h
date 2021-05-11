@@ -45,8 +45,6 @@ typedef void (^AssetResult)(PMAssetEntity *);
 
 - (void)getLivePhotoFileWithId:(NSString *)id resultHandler:(NSObject <PMResultHandler> *)handler progressHandler:(NSObject <PMProgressHandlerProtocol> *)progressHandler;
 
-- (BOOL)livePhotoResourceExistsWithId:(NSString *)id;
-
 - (PMAssetPathEntity *)fetchPathProperties:(NSString *)id type:(int)type filterOption:(PMFilterOptionGroup *)filterOption;
 
 - (void)deleteWithIds:(NSArray<NSString *> *)ids changedBlock:(ChangeIds)block;

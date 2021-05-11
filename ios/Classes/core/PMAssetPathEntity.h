@@ -37,19 +37,22 @@
 @property(nonatomic, assign) double lng;
 @property(nonatomic, copy) NSString *title;
 @property(nonatomic, assign) BOOL favorite;
+@property(nonatomic, assign) BOOL isLivePhoto;
 
 - (instancetype)initWithId:(NSString *)id
                   createDt:(long)createDt
                      width:(NSUInteger)width
                     height:(NSUInteger)height
                   duration:(long)duration
-                      type:(int)type;
+                      type:(int)type
+               isLivePhoto:(BOOL)isLivePhoto;
 
 + (instancetype)entityWithId:(NSString *)id
                     createDt:(long)createDt
                        width:(NSUInteger)width
                       height:(NSUInteger)height
                     duration:(long)duration
-                        type:(int)type;
+                        type:(int)type
+                 isLivePhoto:(BOOL)isLivePhoto;
 
 @end

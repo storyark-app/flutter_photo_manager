@@ -286,12 +286,18 @@
   NSDate *modifiedDate = asset.modificationDate;
   long modifiedTimeStamp = (long) modifiedDate.timeIntervalSince1970;
 
+  BOOL isLivePhoto = false;
+  if (@available(iOS 9.1, *)) {
+      isLivePhoto = (asset.mediaSubtypes & PHAssetMediaSubtypePhotoLive);
+  }
+
   PMAssetEntity *entity = [PMAssetEntity entityWithId:asset.localIdentifier
                                              createDt:createDt
                                                 width:asset.pixelWidth
                                                height:asset.pixelHeight
                                              duration:(long) asset.duration
-                                                 type:type];
+                                                 type:type
+                                          isLivePhoto:isLivePhoto];
   entity.phAsset = asset;
   entity.modifiedDt = modifiedTimeStamp;
   entity.lat = asset.location.coordinate.latitude;
@@ -474,7 +480,7 @@
                            error:nil];
 
   [path appendFormat:@"%@/%d_%@", @".video", (int)asset.modificationDate.timeIntervalSince1970 ,filename];
-  
+
   PHVideoRequestOptions *options = [PHVideoRequestOptions new];
   options.version = PHVideoRequestOptionsVersionCurrent;
   if ([manager fileExistsAtPath:path]) {
@@ -483,14 +489,14 @@
     [handler reply:path];
     return;
   }
-    
+
   [self notifyProgress:progressHandler progress:0 state:PMProgressStatePrepare];
   [options setProgressHandler:^(double progress, NSError *error, BOOL *stop,
                                 NSDictionary *info) {
     if (progress == 1.0) {
       [self notifyProgress:progressHandler progress:progress state:PMProgressStateLoading];
     }
-    
+
     if (error) {
       [self notifyProgress:progressHandler progress:progress state:PMProgressStateFailed];
       [progressHandler deinit];
@@ -505,13 +511,13 @@
   [[PHImageManager defaultManager]
    requestExportSessionForVideo:asset options:options exportPreset:AVAssetExportPresetHighestQuality resultHandler:^(AVAssetExportSession *_Nullable exportSession, NSDictionary *_Nullable info) {
     BOOL downloadFinish = [PMManager isDownloadFinish:info];
-    
+
     if (!downloadFinish) {
       NSLog(@"Asset download fail: %@");
       [handler reply:nil];
       return;
     }
-    
+
     if (exportSession) {
       exportSession.shouldOptimizeForNetworkUse = YES;
       exportSession.outputFileType = AVFileTypeMPEG4;
@@ -587,15 +593,15 @@
     if ([handler isReplied]) {
       return;
     }
-    
+
     BOOL downloadFinished = [PMManager isDownloadFinish:info];
     if (!downloadFinished) {
       [handler reply:nil];
       return;
     }
-    
+
     NSString *path = [self writeFullFileWithAssetId:asset imageData:UIImageJPEGRepresentation(image, 1.0)];
-    
+
     [self notifySuccess:progressHandler];
     [handler reply:path];
   }];
@@ -629,25 +635,6 @@
 
 - (BOOL)isImage:(PHAssetResource *)resource {
   return resource.type == PHAssetResourceTypePhoto || resource.type == PHAssetResourceTypeFullSizePhoto;
-}
-
-- (BOOL)livePhotoResourceExistsWithId:(NSString *)id {
-    PMAssetEntity *entity = [self getAssetEntity:id];
-    if (!(entity && entity.phAsset)) {
-        return false;
-    }
-    PHAsset *asset = entity.phAsset;
-    if (!asset.isImage) {
-        return false;
-    }
-    NSArray<PHAssetResource *> *assetResources = [PHAssetResource assetResourcesForAsset:asset];
-
-    PHAssetResource *livePhotoResource = [self findLivePhotoResource:assetResources];
-    if (livePhotoResource == nil) {
-        return false;
-    }
-
-    return true;
 }
 
 - (void)getLivePhotoFileWithId:(NSString *)id resultHandler:(NSObject <PMResultHandler> *)handler progressHandler:(NSObject <PMProgressHandlerProtocol> *)progressHandler {

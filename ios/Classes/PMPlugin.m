@@ -159,10 +159,6 @@
       PMProgressHandler *progressHandler = [self getProgressHandlerFromDict:call.arguments];
 
       [manager getLivePhotoFileWithId:assetId resultHandler:handler progressHandler:progressHandler];
-    } else if ([call.method isEqualToString:@"hasLivePhotoResource"]) {
-      NSString *assetId = call.arguments[@"id"];
-      BOOL exists = [manager livePhotoResourceExistsWithId:assetId];
-      [handler reply:@(exists)];
     } else if ([call.method isEqualToString:@"releaseMemCache"]) {
       [manager clearCache];
     } else if ([call.method isEqualToString:@"fetchPathProperties"]) {
