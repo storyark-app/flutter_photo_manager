@@ -697,14 +697,21 @@
 }
 
 - (PHAssetResource *)findLivePhotoResource:(NSArray <PHAssetResource *> *)resources {
-    for (PHAssetResource *resource in resources) {
-        if (@available(iOS 9.1, *)) {
-            if (resource.type == PHAssetResourceTypePairedVideo) {
-                return resource;
-            }
-        }
+  for (PHAssetResource *resource in resources) {
+    if (@available(iOS 10, *)) {
+      if (resource.type == PHAssetResourceTypeFullSizePairedVideo) {
+        return resource;
+      }
     }
-    return nil;
+  }
+  for (PHAssetResource *resource in resources) {
+    if (@available(iOS 9.1, *)) {
+      if (resource.type == PHAssetResourceTypePairedVideo) {
+        return resource;
+      }
+    }
+  }
+  return nil;
 }
 
 - (void)fetchOriginImageFile:(PHAsset *)asset resultHandler:(NSObject <PMResultHandler> *)handler progressHandler:(NSObject <PMProgressHandlerProtocol> *)progressHandler {

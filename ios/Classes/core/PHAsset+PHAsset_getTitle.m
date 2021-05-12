@@ -79,44 +79,45 @@
 }
 
 - (PHAssetResource *)getAdjustResource {
-  NSArray<PHAssetResource *> *resources =
-      [PHAssetResource assetResourcesForAsset:self];
-  if (resources.count == 0) {
-    return nil;
-  }
-
-  if (resources.count == 1) {
-    return resources[0];
-  }
-
-  if (![self isAdjust]) {
-    for (PHAssetResource *res in resources) {
-      if (self.mediaType == PHAssetMediaTypeImage ||
-          res.type == PHAssetResourceTypeFullSizePhoto ||
-          res.type == PHAssetResourceTypePhoto) {
-        return res;
-      }
-
-      if (self.mediaType == PHAssetMediaTypeVideo ||
-          res.type == PHAssetResourceTypeFullSizeVideo ||
-          res.type == PHAssetResourceTypeVideo) {
-        return res;
-      }
+    NSArray<PHAssetResource *> *resources =
+            [PHAssetResource assetResourcesForAsset:self];
+    if (resources.count == 0) {
+        return nil;
     }
 
-    return nil;
-  }
-
-  for (PHAssetResource *res in resources) {
-    if (self.mediaType == PHAssetMediaTypeImage ||
-        res.type == PHAssetResourceTypeFullSizePhoto) {
-      return res;
+    if (resources.count == 1) {
+        return resources[0];
     }
 
-    if (self.mediaType == PHAssetMediaTypeVideo ||
-        res.type == PHAssetResourceTypeFullSizeVideo) {
-      return res;
+    // If the asset is an image
+    if (self.mediaType == PHAssetMediaTypeImage) {
+        // First, try to find the edited photo asset resource
+        for (PHAssetResource *res in resources) {
+            if (res.type == PHAssetResourceTypeFullSizePhoto) {
+                return res;
+            }
+        }
+        // If we couldn't find one, try to find the original, un-edited asset resource.
+        for (PHAssetResource *res in resources) {
+            if (res.type == PHAssetResourceTypePhoto) {
+                return res;
+            }
+        }
     }
+    // If the asset is a video
+    if (self.mediaType == PHAssetMediaTypeVideo) {
+        // First try to find the edited video asset resource
+        for (PHAssetResource *res in resources) {
+            if (res.type == PHAssetResourceTypeFullSizeVideo) {
+                return res;
+            }
+        }
+        // If we couldn't find one, try to find the original, un-edited asset resource.
+        for (PHAssetResource *res in resources) {
+            if (res.type == PHAssetResourceTypeVideo) {
+                return res;
+            }
+        }
   }
 
   return nil;
