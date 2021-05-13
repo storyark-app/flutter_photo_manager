@@ -3,6 +3,7 @@ description: You can scan photos and albums. Only api, not have ui. you can use 
 version: 1.1.6
 # author: caijinglong<cjl_spy@163.com>
 homepage: https://github.com/CaiJingLong/flutter_photo_manager
+publish_to: none
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
