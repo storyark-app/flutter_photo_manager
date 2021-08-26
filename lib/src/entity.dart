@@ -6,11 +6,16 @@ class AssetPathEntity {
   static Future<AssetPathEntity> fromId(
     String id, {
     FilterOptionGroup? filterOption,
+    RequestType type = RequestType.common,
+    int albumType = 1,
   }) async {
+    assert(albumType == 1 || Platform.isIOS || Platform.isMacOS);
     filterOption ??= FilterOptionGroup();
     final entity = AssetPathEntity()
       ..id = id
-      ..filterOption = filterOption;
+      ..filterOption = filterOption
+      ..typeInt = type.index
+      ..albumType = 1;
     await entity.refreshPathProperties();
     return entity;
   }
@@ -242,6 +247,14 @@ class AssetEntity {
   /// height of asset.
   int height;
 
+  bool get _isLandscape => orientation == 90 || orientation == 270;
+
+  int get orientatedWidth => _isLandscape ? height : width;
+
+  int get orientatedHeight => _isLandscape ? width : height;
+
+  Size get orientatedSize => _isLandscape ? size.flipped : size;
+
   /// Gps information when shooting, nullable.
   ///
   /// When the device is android10 or above, always null.
@@ -275,6 +288,11 @@ class AssetEntity {
   set longitude(double? longitude) {
     _longitude = longitude;
   }
+
+  /// Whether this asset is locally available.
+  ///
+  /// Defaults to true, and it'll always be true on Android.
+  Future<bool> get isLocallyAvailable => PhotoManager._isLocallyAvailable(id);
 
   /// Get latitude and longitude from MediaStore(android) / Photos(iOS).
   ///
@@ -394,7 +412,7 @@ class AssetEntity {
   /// if not video, duration is 0
   Duration get videoDuration => Duration(seconds: duration);
 
-  /// nullable, if the manager is null.
+  /// The [Size] for the asset.
   Size get size => Size(width.toDouble(), height.toDouble());
 
   /// unix timestamp second of asset
@@ -477,9 +495,7 @@ class AssetEntity {
   }
 
   @override
-  String toString() {
-    return "AssetEntity{ id:$id , type: $type}";
-  }
+  String toString() => "AssetEntity (id:$id , type: $type)";
 }
 
 /// Longitude and latitude

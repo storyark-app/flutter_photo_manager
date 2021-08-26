@@ -37,6 +37,7 @@
 @property(nonatomic, assign) double lng;
 @property(nonatomic, copy) NSString *title;
 @property(nonatomic, assign) BOOL favorite;
+@property(nonatomic, assign) BOOL isLocallyAvailable;
 @property(nonatomic, assign) BOOL isLivePhoto;
 
 - (instancetype)initWithId:(NSString *)id

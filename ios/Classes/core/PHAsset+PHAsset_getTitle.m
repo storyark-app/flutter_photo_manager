@@ -13,7 +13,7 @@
 
 - (NSString *)title {
     PMLogUtils *logger = [PMLogUtils sharedInstance];
-    NSLog(@"get title start");
+    [logger info:@"get title start"];
     @try {
         NSString *result = [self valueForKey:@"filename"];
         [logger info:@"get title from kvo"];
@@ -22,16 +22,16 @@
         [logger info: @"get title from PHAssetResource"];
         NSArray *array = [PHAssetResource assetResourcesForAsset:self];
         for (PHAssetResource *resource in array) {
-          if ([self isImage] && resource.type == PHAssetResourceTypePhoto) {
-            return resource.originalFilename;
-          } else if ([self isVideo] && resource.type == PHAssetResourceTypeVideo) {
-            return resource.originalFilename;
-          }
+            if ([self isImage] && resource.type == PHAssetResourceTypePhoto) {
+                return resource.originalFilename;
+            } else if ([self isVideo] && resource.type == PHAssetResourceTypeVideo) {
+                return resource.originalFilename;
+            }
         }
 
         PHAssetResource *firstRes = array.firstObject;
         if (firstRes) {
-          return firstRes.originalFilename;
+            return firstRes.originalFilename;
         }
 
         return @"";
@@ -39,43 +39,43 @@
 }
 
 - (BOOL)isAdjust {
-  NSArray<PHAssetResource *> *resources =
-      [PHAssetResource assetResourcesForAsset:self];
-  if (resources.count == 1) {
+    NSArray<PHAssetResource *> *resources =
+    [PHAssetResource assetResourcesForAsset:self];
+    if (resources.count == 1) {
+        return NO;
+    }
+
+    if (self.mediaType == PHAssetMediaTypeImage) {
+        return [self imageIsAdjust:resources];
+    } else if (self.mediaType == PHAssetMediaTypeVideo) {
+        return [self videoIsAdjust:resources];
+    }
+
     return NO;
-  }
-
-  if (self.mediaType == PHAssetMediaTypeImage) {
-    return [self imageIsAdjust:resources];
-  } else if (self.mediaType == PHAssetMediaTypeVideo) {
-    return [self videoIsAdjust:resources];
-  }
-
-  return NO;
 }
 
 - (BOOL)imageIsAdjust:(NSArray<PHAssetResource *> *)resources {
-  int count = 0;
-  for (PHAssetResource *res in resources) {
-    if (res.type == PHAssetResourceTypePhoto ||
-        res.type == PHAssetResourceTypeFullSizePhoto) {
-      count++;
+    int count = 0;
+    for (PHAssetResource *res in resources) {
+        if (res.type == PHAssetResourceTypePhoto ||
+            res.type == PHAssetResourceTypeFullSizePhoto) {
+            count++;
+        }
     }
-  }
 
-  return count > 1;
+    return count > 1;
 }
 
 - (BOOL)videoIsAdjust:(NSArray<PHAssetResource *> *)resources {
-  int count = 0;
-  for (PHAssetResource *res in resources) {
-    if (res.type == PHAssetResourceTypeVideo ||
-        res.type == PHAssetResourceTypeFullSizeVideo) {
-      count++;
+    int count = 0;
+    for (PHAssetResource *res in resources) {
+        if (res.type == PHAssetResourceTypeVideo ||
+            res.type == PHAssetResourceTypeFullSizeVideo) {
+            count++;
+        }
     }
-  }
 
-  return count > 1;
+    return count > 1;
 }
 
 - (PHAssetResource *)getAdjustResource {
@@ -104,7 +104,7 @@
             }
         }
     }
-    // If the asset is a video
+        // If the asset is a video
     if (self.mediaType == PHAssetMediaTypeVideo) {
         // First try to find the edited video asset resource
         for (PHAssetResource *res in resources) {
@@ -124,29 +124,29 @@
 }
 
 - (void)requestAdjustedData:(void (^)(NSData *_Nullable))block {
-  PHAssetResource *res = [self getAdjustResource];
+    PHAssetResource *res = [self getAdjustResource];
 
-  PHAssetResourceManager *manager = PHAssetResourceManager.defaultManager;
-  PHAssetResourceRequestOptions *opt = [PHAssetResourceRequestOptions new];
+    PHAssetResourceManager *manager = PHAssetResourceManager.defaultManager;
+    PHAssetResourceRequestOptions *opt = [PHAssetResourceRequestOptions new];
 
-  __block double pro = 0;
+    __block double pro = 0;
 
-  opt.networkAccessAllowed = YES;
-  opt.progressHandler = ^(double progress) {
-    pro = progress;
-  };
+    opt.networkAccessAllowed = YES;
+    opt.progressHandler = ^(double progress) {
+        pro = progress;
+    };
 
-  [manager requestDataForAssetResource:res
-                               options:opt
-                   dataReceivedHandler:^(NSData *_Nonnull data) {
-                     if (pro != 1) {
-                       return;
-                     }
-                     block(data);
-                   }
-                     completionHandler:^(NSError *_Nullable error){
+    [manager requestDataForAssetResource:res
+                                 options:opt
+                     dataReceivedHandler:^(NSData *_Nonnull data) {
+        if (pro != 1) {
+            return;
+        }
+        block(data);
+    }
+                       completionHandler:^(NSError *_Nullable error){
 
-                     }];
+    }];
 }
 
 @end

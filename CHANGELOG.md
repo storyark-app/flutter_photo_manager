@@ -1,6 +1,19 @@
 # CHANGELOG
 
 - [CHANGELOG](#changelog)
+  - [1.3.1](#131)
+  - [1.3.0](#130)
+  - [1.2.9](#129)
+  - [1.2.8](#128)
+  - [1.2.7](#127)
+  - [1.2.6+1](#1261)
+  - [1.2.6](#126)
+  - [1.2.5](#125)
+  - [1.2.4](#124)
+  - [1.2.3](#123)
+  - [1.2.2](#122)
+  - [1.2.1](#121)
+  - [1.2.0](#120)
   - [1.1.6](#116)
   - [1.1.5](#115)
   - [1.1.4](#114)
@@ -58,13 +71,115 @@
   - [0.0.2 update readme](#002-update-readme)
   - [0.0.1](#001)
 
+## 1.3.1
+
+Fixes:
+- `fetchPathProperties` returned wrong `isAll` on iOS. (#580)
+- `updateTimeCond` not constructed correctly with `FilterOptionGroup`.
+
+## 1.3.0
+
+Improvements:
+- Repo cleanup.
+
+Fixes:
+- Removed recursive calls with progress handler. (#577)
+
+We're bumping the minor version because we've achieved recent goals
+and applied multiple fixes which make this plugin as the most solid ever.
+
+## 1.2.9
+
+Features:
+- Add orientated getters. (#575)
+
+## 1.2.8
+
+Fixes:
+- Saving methods return null. (#573)
+
+## 1.2.7
+
+Improvements:
+
+- Improve `AssetEntity.getMediaUrl()` behaviors.
+
+Fixes:
+
+- Merge all fields for `FilterOptionGroup`.
+- Make `AssetEntity.isLocallyAvailable` as a `Future` getter.
+
+## 1.2.6+1
+
+Fixes:
+
+- Apply further fix to [#559](../../pull/559).
+- Repo cleanup.
+
+## 1.2.6
+
+Fixes:
+
+- [#558](../../pull/558).
+- [#559](../../pull/559).
+- [#560](../../pull/560).
+
+## 1.2.5
+
+Fix:
+
+- Fix `open` setting for macOS.
+- Fix `setLog` for iOS and macOS.
+
+## 1.2.4
+
+Fix:
+
+- `saveImage` method missing file extension for the fallback title.
+- `openSettings` method.
+
+## 1.2.3
+
+Fix:
+
+- Change notify issue on remove callback.
+- Reply result for `presentLimited` method.
+
+Feature:
+
+- Add assets count change when notify on iOS.
+- Add some properties and methods for change notify.
+
+## 1.2.2
+
+Fix:
+
+- Add request permissions result listener when activity re-attached. [#515](../../pull/515)
+
+## 1.2.1
+
+Fix:
+
+- An error of iOS. See [#509](../../pull/509), [#510](../../pull/510).
+
+## 1.2.0
+
+Feature:
+
+- Add requestPermissionExtend code to support iOS 14 permission.
+- Add update limited photos method for iOS 14.
+
+Fix:
+
+- Permissions dialog of launch on old iOS versions. [#503](../../pull/503)
+
 ## 1.1.6
 
 The MEDIA_LOCATION permission of android can be removed through configuration.
 
 ## 1.1.5
 
-Revert [#478](https://github.com/CaiJingLong/flutter_photo_manager/pull/478)
+Revert [#478](../../pull/478)
 
 Fix:
 
@@ -72,7 +187,7 @@ Fix:
 
 ## 1.1.4
 
-Merged [#478](https://github.com/CaiJingLong/flutter_photo_manager/pull/478)
+Merged [#478](../../pull/478)
 
 ## 1.1.3
 
@@ -127,7 +242,7 @@ Breaking change:
 - Feature
 
   - Support android API 30.
-  - Support show empty album in iOS([#365](https://github.com/CaiJingLong/flutter_photo_manager/issues/365)).
+  - Support show empty album in iOS([#365](../../issues/365)).
   - User can ignore check permission(User can choose favorite permission plugin, but at the same time user have to bear the risks corresponding to the permission).
   - Support clean file cache.
   - Experimental
@@ -136,7 +251,7 @@ Breaking change:
   - Support icloud asset progress.
 
 - Fixes
-  - [#362](https://github.com/CaiJingLong/flutter_photo_manager/issues/362)
+  - [#362](../../issues/362)
   - Delete assets in androidQ.
   - Edited image data in iOS.
   - Fix delete error in androidR.
@@ -156,7 +271,7 @@ Delete assets in androidQ.
 
 Fix:
 
-- Audio asset error for androidQ. See [#340](https://github.com/CaiJingLong/flutter_photo_manager/issues/340) [#341](https://github.com/CaiJingLong/flutter_photo_manager/pull/341).
+- Audio asset error for androidQ. See [#340](../../issues/340) [#341](../../pull/341).
 
 ## 0.5.6
 
@@ -254,8 +369,8 @@ Fix
 
 Fixes:
 
-- [#169](https://github.com/CaiJingLong/flutter_photo_manager/issues/169)
-- [#170](https://github.com/CaiJingLong/flutter_photo_manager/issues/170)
+- [#169](../../issues/169)
+- [#170](../../issues/170)
 
 ## 0.4.7
 
