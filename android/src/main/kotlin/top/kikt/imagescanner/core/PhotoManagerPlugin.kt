@@ -98,7 +98,7 @@ class PhotoManagerPlugin(
                 true
             }
             "log" -> {
-                LogUtils.isLog = call.arguments()
+                LogUtils.isLog = call.arguments() ?: false
                 resultHandler.reply(1)
                 true
             }
@@ -125,7 +125,7 @@ class PhotoManagerPlugin(
                 true
             }
             "cacheOriginBytes" -> {
-                cacheOriginBytes = call.arguments()
+                cacheOriginBytes = call.arguments() ?: false
                 resultHandler.reply(cacheOriginBytes)
                 true
             }
